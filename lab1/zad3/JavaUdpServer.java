@@ -25,9 +25,7 @@ public class JavaUdpServer {
                 System.out.println("received msg: " + nb);
                 nb = Integer.reverseBytes(nb+1);
                 receiveBuffer = ByteBuffer.allocate(4).putInt(nb).array();
-                InetAddress address = InetAddress.getByName("localhost");
-
-                DatagramPacket sendPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, address, 9009);
+                DatagramPacket sendPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, receivePacket.getAddress(), receivePacket.getPort());
                 socket.send(sendPacket);
                 
             }

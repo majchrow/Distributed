@@ -6,14 +6,8 @@ msg = "Ping Python Udp!"
 
 print('PYTHON UDP CLIENT')
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-client.bind(('', 9010))
 
-client.sendto(bytes(msg, 'cp1250'), (serverIP, serverPort))
+client.sendto(bytes(msg, 'UTF-8'), (serverIP, serverPort))
 
 buff, address = client.recvfrom(1024)
 print("python received msg: " + str(buff, 'UTF-8'))
-
-
-
-
-

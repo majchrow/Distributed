@@ -22,15 +22,9 @@ public class JavaUdpServer {
                 String msg = new String(receivePacket.getData());
                 System.out.println("received msg: " + msg);
 
-                String[] add = msg.split(":");
-                String receivedAddress =  add[0];
-
-                int receivedPort = Integer.parseInt(add[1].trim());
-
-                InetAddress address = InetAddress.getByName(receivedAddress);
                 byte[] sendBuffer = "Thanks for message".getBytes();
 
-                DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, receivedPort);
+                DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, receivePacket.getAddress(), receivePacket.getPort());
                 socket.send(sendPacket);
             }
         }

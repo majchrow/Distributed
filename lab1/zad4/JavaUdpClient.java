@@ -12,7 +12,7 @@ public class JavaUdpClient {
         int portNumber = 9009;
 
         try {
-            socket = new DatagramSocket(9010);
+            socket = new DatagramSocket();
             InetAddress address = InetAddress.getByName("localhost");
             byte[] sendBuffer = "Ping Java Udp".getBytes();
 
