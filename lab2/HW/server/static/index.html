@@ -1,0 +1,25 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Bikers</title>
+    <meta name="description" content="Check for free bikes">
+    <meta name="author" content="Dawid Majchrowski">
+</head>
+
+<form action="rest/bikes" method="POST">
+    <label><input type="radio" name="option" value="region">Region</label>
+    <label><input type="radio" name="option" value="country" checked>Country</label>
+    <label><input type="radio" name="option" value="city">City</label>
+    <br/>
+    <label for="input">Input</label><input name="input" size="150"/>
+    <br/>
+    <label for="minbikes">Min Bikes</label><input name="minbikes"/>
+    <br/>
+    <label for="maxbikes">Max Bikes</label><input name="maxbikes"/>
+    <br/>
+    <input type="submit" value="Submit"/>
+</form>
+</html>

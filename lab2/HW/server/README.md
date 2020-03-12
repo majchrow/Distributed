@@ -29,6 +29,16 @@
 `https://restcountries.eu/`
 
 ### Endopoints (only important resources described)
+
+`/rest/v2/{name}` - Search by country name. It can be the native name or partial name
+
+- **(list)**
+	- **alpha2Code** - country alpha number (2-letter)
+	- **name** - country name
+	- **area** - area [km²]
+	- **gini** - gini coefficient [%]
+	- **population** - population [exact number]
+
 `/rest/v2/alpha/{alpha}` - Search by ISO 3166-1 2-letter or 3-letter country code
 
 - **name** - country name

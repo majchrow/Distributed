@@ -2,9 +2,9 @@ import http.client as http
 import json
 import random
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 
 class Bikes:
@@ -79,7 +79,7 @@ def country_request(inp, minbikes, maxbikes):
 
 
 def city_request(inp, minbikes, maxbikes):
-    cities_info = []
+    codes = {}
     conn = http.HTTPConnection(Bikes.URL)
     if conn:
         app.logger.info('Connected to %s', Bikes.URL)
@@ -89,9 +89,12 @@ def city_request(inp, minbikes, maxbikes):
             networks = json.loads(resp.read().decode('utf-8'))
             for network in networks['networks']:
                 if network['location']['city'] in inp:
+                    code = network['location']['country']
                     city = network['location']['city']
                     bikes = count_bikes(conn, network['href'], minbikes, maxbikes)
+                    cities_info = codes.get(code, [])
                     cities_info.append((city, bikes))
+                    codes[code] = cities_info
         else:
             app.logger.warning('Failed to request', Bikes.NETWORKS)
     else:
@@ -99,7 +102,37 @@ def city_request(inp, minbikes, maxbikes):
     if conn:
         app.logger.info('Disconnecting from %s', Bikes.URL)
         conn.close()
-    return cities_info
+    countries = {}
+    for code, cities_info in codes.items():
+        country_name, details = get_basic_country_info(code)
+        details['cities'] = cities_info
+        countries[country_name] = details
+    return countries
+
+
+def get_basic_country_info(code):
+    country, country_info = 'UNK', {}
+    conn = http.HTTPConnection(Country.URL)
+    if conn:
+        app.logger.info('Connected to %s', Country.URL)
+    else:
+        app.logger.info('Failed to connect %s', Country.URL)
+        return country, country_info
+    endpoint = Country.ALPHA + code
+    conn.request("GET", endpoint)
+    resp = conn.getresponse()
+    if resp.status == 200:
+        data = json.loads(resp.read().decode('utf-8'))
+        country = data['name']
+        country_info['area'] = data['area']
+        country_info['gini'] = data['gini']
+        country_info['population'] = data['population']
+    else:
+        app.logger.warning('Could not make request to endpoint %s skipping', endpoint)
+    if conn:
+        app.logger.info('Disconnected from %s', Country.URL)
+        conn.close()
+    return country, country_info
 
 
 def get_cities_info(codes, minbikes, maxbikes):
@@ -180,16 +213,23 @@ def calculate():
         inp = list(set(inp))  # eliminate duplicates
         if option == 'country':
             parsed = country_request(inp, minbikes, maxbikes)
-        else:
+        else:  # city
             parsed = city_request(inp, minbikes, maxbikes)
-            print(parsed)
-            parsed = {}
-    return parsed
+    return render_template("countires.html", parsed=parsed)
+
+
+# def parse_one_country(country):
+#     name = country.keys()[0]
+#     country = country.values()
+#     gini = f"<div>Gini:{country['gini']}</div>"
+#     area = f"<div>Area:{country['area']}</div>"
+#     population = f"<div>Population:{country['population']}</div>"
+#     return gini + area + population
 
 
 @app.route('/')
-def hello_world():
-    return 'Hey!'
+def root():
+    return app.send_static_file('index.html')
 
 
 if __name__ == "__main__":

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Countries</title>
+</head>
+<body>
+
+<div> Free bikes per city in given countries</div>
+{% for country, details in parsed.items() %}
+    <div>{{ country }}</div>
+    <table border=1>
+        <tr>
+            <th> Country</th>
+            <td> {{ country }} </td>
+        </tr>
+        <tr>
+            <th> Area</th>
+            <td> {{ details['area'] }} </td>
+        </tr>
+        <tr>
+            <th> Population</th>
+            <td> {{ details['population'] }} </td>
+        </tr>
+        <tr>
+            <th> Gini</th>
+            <td> {{ details['gini'] }} </td>
+        </tr>
+        {% for city, bikes in details['cities'] %}
+            <tr>
+                <th> {{ city }} </th>
+                <td> {{ bikes }} </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endfor %}
+
+
+</body>
+</html>
