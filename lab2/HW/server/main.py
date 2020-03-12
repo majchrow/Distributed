@@ -1,6 +1,7 @@
-import http.client as http
+import http.client as http  # low lvl library for http (GET) requests
 import json
 import random
+from urllib.parse import quote  # url string encode for countries (spaces, non ascii characters, etc)
 
 from flask import Flask, request, abort, render_template
 
@@ -40,10 +41,10 @@ def region_request(inp, minbikes, maxbikes):
     if conn:
         app.logger.info('Disconnected from %s', Country.URL)
         conn.close()
-    return country_request(countries, minbikes, maxbikes)
+    return country_request(countries, minbikes, maxbikes, full=True)
 
 
-def country_request(inp, minbikes, maxbikes):
+def country_request(inp, minbikes, maxbikes, full=False):
     result = {}
     codes = []
     conn = http.HTTPConnection(Country.URL)
@@ -53,7 +54,9 @@ def country_request(inp, minbikes, maxbikes):
         app.logger.info('Failed to connect %s', Country.URL)
         return result
     for country in inp:
-        endpoint = Country.NAME + country.replace(" ", "%20")  # if case there is a space in the country URL
+        endpoint = Country.NAME + quote(country)  # Watch out for the country UTF-8 encoding in low level requests!
+        if full:
+            endpoint += '?fullText=true'
         conn.request("GET", endpoint)
         resp = conn.getresponse()
         if resp.status == 200:

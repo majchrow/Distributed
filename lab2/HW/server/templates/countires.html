@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <th> Gini</th>
-            <td> {{ details['gini'] }} </td>
+                <td> {{ details['gini'] if details['gini'] else 'Unknown'}} </td>
         </tr>
         {% for city, bikes in details['cities'] %}
             <tr>
