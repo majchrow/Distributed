@@ -30,6 +30,7 @@ def region_request(inp, minbikes, maxbikes):
     conn.request("GET", endpoint)
     resp = conn.getresponse()
     if resp.status == 200:
+        app.logger.info('Request %s successful', endpoint)
         data = json.loads(resp.read().decode('utf-8'))
         data = random.sample(data, 2)  # GET ONLY 2 countries at random, due to long queries
         countries = [country['name'] for country in data]
@@ -52,13 +53,15 @@ def country_request(inp, minbikes, maxbikes):
         app.logger.info('Failed to connect %s', Country.URL)
         return result
     for country in inp:
-        endpoint = Country.NAME + country
+        endpoint = Country.NAME + country.replace(" ", "%20")  # if case there is a space in the country URL
         conn.request("GET", endpoint)
         resp = conn.getresponse()
         if resp.status == 200:
+            app.logger.info('Request %s successful', endpoint)
             data = json.loads(resp.read().decode('utf-8'))
             if len(data) != 1:
                 app.logger.warning('Ambiguity with country %s skipping', country)
+                continue
             data = data[0]
             country_info = {}
             country = data['name']
@@ -86,6 +89,7 @@ def city_request(inp, minbikes, maxbikes):
         conn.request("GET", Bikes.NETWORKS)
         resp = conn.getresponse()
         if resp.status == 200:
+            app.logger.info('Request %s successful', Bikes.NETWORKS)
             networks = json.loads(resp.read().decode('utf-8'))
             for network in networks['networks']:
                 if network['location']['city'] in inp:
@@ -122,6 +126,7 @@ def get_basic_country_info(code):
     conn.request("GET", endpoint)
     resp = conn.getresponse()
     if resp.status == 200:
+        app.logger.info('Request %s successful', endpoint)
         data = json.loads(resp.read().decode('utf-8'))
         country = data['name']
         country_info['area'] = data['area']
@@ -144,6 +149,7 @@ def get_cities_info(codes, minbikes, maxbikes):
         conn.request("GET", Bikes.NETWORKS)
         resp = conn.getresponse()
         if resp.status == 200:
+            app.logger.info('Request %s successful', Bikes.NETWORKS)
             networks = json.loads(resp.read().decode('utf-8'))
             for network in networks['networks']:
                 code = network['location']['country']
@@ -169,6 +175,7 @@ def count_bikes(conn, endpoint, minbikes, maxbikes):
         app.logger.info('Connected to %s', endpoint)
         resp = conn.getresponse()
         if resp.status == 200:
+            app.logger.info('Request %s successful', endpoint)
             stations = json.loads(resp.read().decode('utf-8'))
             bikes = sum(station['free_bikes'] for station in stations['network']['stations'] if
                         minbikes <= station['free_bikes'] <= maxbikes)
@@ -216,15 +223,6 @@ def calculate():
         else:  # city
             parsed = city_request(inp, minbikes, maxbikes)
     return render_template("countires.html", parsed=parsed)
-
-
-# def parse_one_country(country):
-#     name = country.keys()[0]
-#     country = country.values()
-#     gini = f"<div>Gini:{country['gini']}</div>"
-#     area = f"<div>Area:{country['area']}</div>"
-#     population = f"<div>Population:{country['population']}</div>"
-#     return gini + area + population
 
 
 @app.route('/')
