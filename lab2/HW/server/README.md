@@ -30,7 +30,7 @@
 
 ### Endopoints (only important resources described)
 
-`/rest/v2/{name}` - Search by country name. It can be the native name or partial name
+`/rest/v2/name/{name}` - Search by country name. It can be the native name or partial name
 
 - **(list)**
 	- **alpha2Code** - country alpha number (2-letter)

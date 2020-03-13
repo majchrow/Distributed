@@ -40,13 +40,13 @@ Additional field (not required, can be empty)
 ### Example inputs and outputs
 
 **Region**<br>
-![in_1](./img//example/input_1.png)
+![in_1](./img//example/input_1.png)<br>
 ![out_1](./img//example/output_1.png)
 <br>**Country**<br>
-![in_2](./img//example/input_2.png)
+![in_2](./img//example/input_2.png)<br>
 ![out_2](./img//example/output_2.png)
 <br>**City**<br>
-![in_3](./img//example/input_3.png)
+![in_3](./img//example/input_3.png)<br>
 ![out_3](./img//example/output_3.png)
 
 
