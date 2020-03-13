@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "cd5019b9-a692-4535-9211-031c872cd999",
+		"name": "BikesRestApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "networks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api.citybik.es/v2/networks",
+					"protocol": "http",
+					"host": [
+						"api",
+						"citybik",
+						"es"
+					],
+					"path": [
+						"v2",
+						"networks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "network",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api.citybik.es/v2/networks/onroll-baeza",
+					"protocol": "http",
+					"host": [
+						"api",
+						"citybik",
+						"es"
+					],
+					"path": [
+						"v2",
+						"networks",
+						"onroll-baeza"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
