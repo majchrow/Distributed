@@ -1,0 +1,84 @@
+{
+	"info": {
+		"_postman_id": "a80c4dee-533a-4ed8-b11f-ec547e4aebe6",
+		"name": "Bikes City",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "form-city-byd-par-bar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "option",
+							"value": "city",
+							"type": "text"
+						},
+						{
+							"key": "input",
+							"value": "Bydgoszcz, Barcelona, Paris",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "json-city-krk-lwow",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"option\": \"city\",\n    \"input\": \"Kraków, Lviv\",\n    \"minbikes\": 0,\n    \"maxbikes\": \"0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

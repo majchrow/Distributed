@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "9d4e982d-dec0-484f-b939-d949d7a9484d",
+		"name": "Bikes Regions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "form-europe",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "option",
+							"value": "region",
+							"type": "text"
+						},
+						{
+							"key": "input",
+							"value": "europe",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "form-asia",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "option",
+							"value": "region",
+							"type": "text"
+						},
+						{
+							"key": "input",
+							"value": "asia",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "form-oceania-minbikes",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "option",
+							"value": "region",
+							"type": "text"
+						},
+						{
+							"key": "input",
+							"value": "oceania",
+							"type": "text"
+						},
+						{
+							"key": "minbikes",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "json-americas-maxbikes",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"option\": \"region\",\n    \"input\": \"americas\",\n    \"maxbikes\": \"0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "json-africa-full",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"option\": \"region\",\n    \"input\": \"americas\",\n    \"maxbikes\": \"0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

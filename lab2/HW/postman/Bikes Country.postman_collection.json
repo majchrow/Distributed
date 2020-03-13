@@ -1,0 +1,89 @@
+{
+	"info": {
+		"_postman_id": "8fc295cd-cc52-410b-b323-d6d5954e70c1",
+		"name": "Bikes Country",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "form-uk",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "option",
+							"value": "country",
+							"type": "text"
+						},
+						{
+							"key": "input",
+							"value": "ukraine, Isle of Man",
+							"type": "text"
+						},
+						{
+							"key": "minbikes",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "json-africa-full",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"option\": \"country\",\n    \"input\": \"Taiwan, Syrian\",\n    \"maxbikes\": \"0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/rest/bikes",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rest",
+						"bikes"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

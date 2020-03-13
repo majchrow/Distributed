@@ -207,7 +207,7 @@ def calculate():
     attrs = ['option', 'input', 'minbikes', 'maxbikes']
     if request.is_json:
         data = request.get_json()
-        option, inp, minbikes, maxbikes = [data[attr] for attr in attrs]
+        option, inp, minbikes, maxbikes = [data.get(attr, None) for attr in attrs]
     else:
         option, inp, minbikes, maxbikes = [request.form.get(attr) for attr in attrs]
     msg = check_params(option, inp, minbikes, maxbikes)
