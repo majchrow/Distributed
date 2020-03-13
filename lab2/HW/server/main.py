@@ -76,6 +76,7 @@ def country_request(inp, minbikes, maxbikes, full=False):
             result[country] = country_info
         else:
             app.logger.warning('Could not make request to endpoint %s skipping', endpoint)
+            resp.read()  # Important call, when skipping clean previous response!
     if conn:
         app.logger.info('Disconnected from %s', Country.URL)
         conn.close()
