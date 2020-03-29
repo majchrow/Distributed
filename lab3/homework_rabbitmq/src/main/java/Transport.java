@@ -17,16 +17,14 @@ public class Transport {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
-        final Channel channelInAgency = connection.createChannel();
-        final Channel channelInPremium = connection.createChannel();
-//        final Channel channelOut = connection.createChannel();
+        final Channel channel = connection.createChannel();
 
         Service[] resources = getResources();
-        handleAdmin(channelInPremium);
-        handleResources(resources, channelInAgency);
-
-        // TODO SENDING
-//        channelOut.exchangeDeclare(Utils.TRANSPORT_EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+        channel.basicQos(1, false); // Per consumer limit
+        channel.basicQos(5, true); // Per channel limit
+        handleAdmin(channel);
+        handleResources(resources, channel);
+        channel.exchangeDeclare(Utils.TRANSPORT_EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
 
 
     }
@@ -64,9 +62,10 @@ public class Transport {
     public static Consumer createAdminMessageConsumer(Channel channel) {
         return new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, StandardCharsets.UTF_8);
                 System.out.println("Received from admin: " + message);
+                channel.basicAck(envelope.getDeliveryTag(), false);
             }
         };
     }
@@ -74,9 +73,11 @@ public class Transport {
     public static Consumer createPassengerConsumer(Channel channel) {
         return new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, StandardCharsets.UTF_8);
                 System.out.println("Received from passenger: " + message);
+                parseAndSendMessage(message, channel);
+                channel.basicAck(envelope.getDeliveryTag(), false);
             }
         };
     }
@@ -84,9 +85,11 @@ public class Transport {
     public static Consumer createItemConsumer(Channel channel) {
         return new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, StandardCharsets.UTF_8);
                 System.out.println("Received from item: " + message);
+                parseAndSendMessage(message, channel);
+                channel.basicAck(envelope.getDeliveryTag(), false);
             }
         };
     }
@@ -94,47 +97,68 @@ public class Transport {
     public static Consumer createSatellitesConsumer(Channel channel) {
         return new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, StandardCharsets.UTF_8);
                 System.out.println("Received from satellite: " + message);
+                parseAndSendMessage(message, channel);
+                channel.basicAck(envelope.getDeliveryTag(), false);
             }
         };
     }
 
-    private static void handleAdmin(Channel channelInPremium) throws IOException {
-        channelInPremium.exchangeDeclare(Utils.ADMIN_EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+    private static void handleAdmin(Channel channel) throws IOException {
+        channel.exchangeDeclare(Utils.ADMIN_EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
         String adminTransportQueueName = Utils.ADMIN_TRANSPORT_QUEUE + Utils.getTimestamp();
-        channelInPremium.queueBind(adminTransportQueueName, Utils.ADMIN_EXCHANGE_NAME, Utils.ADMIN_ALL_ROUTING_KEY);
-        channelInPremium.queueBind(adminTransportQueueName, Utils.ADMIN_EXCHANGE_NAME, Utils.ADMIN_TRANSPORT_ROUTING_KEY);
+        channel.queueDeclare(adminTransportQueueName, false, false, false, null);
+        channel.queueBind(adminTransportQueueName, Utils.ADMIN_EXCHANGE_NAME, Utils.ADMIN_ALL_ROUTING_KEY);
+        channel.queueBind(adminTransportQueueName, Utils.ADMIN_EXCHANGE_NAME, Utils.ADMIN_TRANSPORT_ROUTING_KEY);
         System.out.println("Created queue " + adminTransportQueueName +
                 " with routing keys: " + Utils.ADMIN_ALL_ROUTING_KEY + ", " + Utils.ADMIN_TRANSPORT_ROUTING_KEY);
-        channelInPremium.basicConsume(adminTransportQueueName, false, createAdminMessageConsumer(channelInPremium));
+        channel.basicConsume(adminTransportQueueName, false, createAdminMessageConsumer(channel));
     }
 
-    private static void handleResources(Service[] resources, Channel channelInAgency) throws IOException {
-        channelInAgency.exchangeDeclare(Utils.AGENCY_EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+    private static void handleResources(Service[] resources, Channel channel) throws IOException {
+        channel.exchangeDeclare(Utils.AGENCY_EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
         for (Service resource : resources) {
             switch (resource) {
                 case PASSENGER:
                     String passengerQueueName = Utils.PASSENGER_SHARED_QUEUE;
-                    channelInAgency.queueBind(passengerQueueName, Utils.AGENCY_EXCHANGE_NAME, Utils.PASSENGER_ROUTING_KEY);
+                    channel.queueDeclare(passengerQueueName, false, false, false, null);
+                    channel.queueBind(passengerQueueName, Utils.AGENCY_EXCHANGE_NAME, Utils.PASSENGER_ROUTING_KEY);
                     System.out.println("Created queue " + passengerQueueName +
-                            " with routing key " + Utils.PASSENGER_ROUTING_KEY);
-                    channelInAgency.basicConsume(passengerQueueName, false, createPassengerConsumer(channelInAgency));
+                            " with routing keys: " + Utils.PASSENGER_ROUTING_KEY);
+                    channel.basicConsume(passengerQueueName, false, createPassengerConsumer(channel));
+                    break;
                 case ITEM:
                     String itemQueueName = Utils.ITEM_SHARED_QUEUE;
-                    channelInAgency.queueBind(itemQueueName, Utils.AGENCY_EXCHANGE_NAME, Utils.ITEM_ROUTING_KEY);
+                    channel.queueDeclare(itemQueueName, false, false, false, null);
+                    channel.queueBind(itemQueueName, Utils.AGENCY_EXCHANGE_NAME, Utils.ITEM_ROUTING_KEY);
                     System.out.println("Created queue " + itemQueueName +
-                            " with routing key " + Utils.ITEM_ROUTING_KEY);
-                    channelInAgency.basicConsume(itemQueueName, false, createItemConsumer(channelInAgency));
+                            " with routing keys: " + Utils.ITEM_ROUTING_KEY);
+                    channel.basicConsume(itemQueueName, false, createItemConsumer(channel));
+                    break;
                 case SATELLITE:
                     String satelliteQueueName = Utils.SATELLITE_SHARED_QUEUE;
-                    channelInAgency.queueBind(satelliteQueueName, Utils.AGENCY_EXCHANGE_NAME, Utils.SATELLITE_ROUTING_KEY);
+                    channel.queueDeclare(satelliteQueueName, false, false, false, null);
+                    channel.queueBind(satelliteQueueName, Utils.AGENCY_EXCHANGE_NAME, Utils.SATELLITE_ROUTING_KEY);
                     System.out.println("Created queue " + satelliteQueueName +
-                            " with routing key " + Utils.SATELLITE_ROUTING_KEY);
-                    channelInAgency.basicConsume(satelliteQueueName, false, createSatellitesConsumer(channelInAgency));
+                            " with routing keys: " + Utils.SATELLITE_ROUTING_KEY);
+                    channel.basicConsume(satelliteQueueName, false, createSatellitesConsumer(channel));
+                    break;
             }
         }
 
     }
+
+    private static void parseAndSendMessage(String message, Channel channel) throws IOException {
+        String[] splitedByColon = message.split(":");
+        String agencyName = splitedByColon[1].split(",")[0].trim();
+        String task = splitedByColon[2].trim();
+        String msg = "Task " + task + " done";
+        channel.basicPublish(Utils.TRANSPORT_EXCHANGE_NAME,
+                agencyName,
+                null,
+                msg.getBytes(StandardCharsets.UTF_8));
+    }
+
 }

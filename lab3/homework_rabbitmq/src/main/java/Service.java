@@ -9,6 +9,6 @@ public enum Service {
 
 
     public static Service getById(int id) {
-        return Service.values()[id];
+        return Service.values()[id - 1];
     }
 }
