@@ -1,7 +1,0 @@
-idea/
-lab/
-target/
-.venv/
-logs/
-__init__*
-__pycache__/
