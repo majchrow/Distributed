@@ -17,7 +17,7 @@ class ServantFactory:
         self.observables = {  # All generated csvs per country
             country: [] for country in COUNTRIES
         }
-        self.subscriptions = {}  # client -> (country, current event indicator)
+        self.subscriptions = {}  # stream -> (country, current event indicator)
         self.fakers = {
             country: Faker(country) for country in COUNTRIES
         }
@@ -38,28 +38,28 @@ class ServantFactory:
             self.indicators[country] = len(self.observables[country])
             time.sleep(self.sleep_time)
 
-    def subscribe_on(self, client, event):
+    def subscribe_on(self, stream, event):
         with self.lock:
-            self.subscriptions[client] = (event, self.indicators[event])
+            self.subscriptions[stream] = (event, self.indicators[event])
 
-    def unsubscribe(self, client):
-        if client in self.subscriptions:
+    def unsubscribe(self, stream):
+        if stream in self.subscriptions:
             with self.lock:
-                del self.subscriptions[client]
+                del self.subscriptions[stream]
 
-    def get_client_indicator(self, client):
-        return self.subscriptions.get(client, ("", -1))[1]
+    def get_stream_indicator(self, stream):
+        return self.subscriptions.get(stream, ("", -1))[1]
 
-    def get_client_country(self, client):
-        return self.subscriptions.get(client, ("", -1))[0]
+    def get_stream_country(self, stream):
+        return self.subscriptions.get(stream, ("", -1))[0]
 
-    def get_new_events(self, client):  # for example [ already send |<current_indicator>| to be sent | <indicator>]
-        if client not in self.subscriptions:
+    def get_new_events(self, stream):  # for example [ already send |<current_indicator>| to be sent | <indicator>]
+        if stream not in self.subscriptions:
             return []
         with self.lock:
-            country, indicator = self.subscriptions.get(client, ("", -1))
+            country, indicator = self.subscriptions.get(stream, ("", -1))
             event_indicator = self.indicators.get(country, -1)
-            self.subscriptions[client] = (country, event_indicator)
+            self.subscriptions[stream] = (country, event_indicator)
             return self.observables[country][indicator:event_indicator]
 
     @staticmethod

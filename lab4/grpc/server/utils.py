@@ -24,3 +24,4 @@ def enable_logger(directory="logs", filename="logfile", extension=".log", level=
             logging.StreamHandler()
         ]
     )
+

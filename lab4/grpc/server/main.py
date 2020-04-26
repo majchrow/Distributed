@@ -9,7 +9,7 @@ from utils import enable_logger
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=5))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=25))
     cv_pb2_grpc.add_CVServicer_to_server(
         CVServicer(), server)
     server.add_insecure_port('[::]:50051')

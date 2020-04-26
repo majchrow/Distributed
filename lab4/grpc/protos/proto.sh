@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ "$#" -ne 2 ]; then
     echo "Expected 2 args: language grpc_file"
     exit 1
