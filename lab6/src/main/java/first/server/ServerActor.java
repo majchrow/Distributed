@@ -16,7 +16,6 @@ public class ServerActor extends AbstractActor {
                 .match(String.class, s -> {
                     ActorRef target = context().actorOf(Props.create(ServerWorker.class));
                     target.forward(s, getContext());
-                    target.tell(1, self());
                 })
                 .matchAny(o -> log.info("received unknown message"))
                 .build();

@@ -4,6 +4,7 @@ import akka.actor.AbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
+import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PriceCheckerWorker extends AbstractActor {
@@ -14,15 +15,20 @@ public class PriceCheckerWorker extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
                 .match(String.class, s -> {
-                    getSender().tell(getPrice(), getSelf());
+                    sendPrice();
+                    context().stop(self());
                 })
                 .matchAny(o -> log.info("received unknown message"))
                 .build();
     }
 
-    private int getPrice() throws InterruptedException {
-        int sleepTime = ThreadLocalRandom.current().nextInt(100, 501);
-        Thread.sleep(sleepTime);
-        return ThreadLocalRandom.current().nextInt(1, 11);
+    private void sendPrice() {
+        getContext().getSystem().scheduler().scheduleOnce(
+                Duration.ofMillis(ThreadLocalRandom.current().nextInt(100, 501)),
+                getSender(),
+                ThreadLocalRandom.current().nextInt(1, 11),
+                getContext().getSystem().dispatcher(),
+                getSelf()
+        );
     }
 }

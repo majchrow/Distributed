@@ -40,10 +40,6 @@ public class ServerWorker extends AbstractActor {
                         secondPrice = (int) Await.result(secondPriceFuture, timeout.duration());
                     } catch (TimeoutException ignored) {
                     }
-
-                    context().stop(firstPriceChecker);
-                    context().stop(secondPriceChecker);
-
                     String price = firstPrice < 0 && secondPrice < 0 ? "not found" : Integer.toString(
                             firstPrice < 0 || secondPrice < 0 ? max(firstPrice, secondPrice) :
                                     min(firstPrice, secondPrice));
@@ -51,8 +47,6 @@ public class ServerWorker extends AbstractActor {
                     String response = String.format("Product: %s | Price %s",
                             s, price);
                     getSender().tell(response, getSelf());
-                })
-                .match(Integer.class, s -> {
                     context().stop(self());
                 })
                 .matchAny(o -> log.info("received unknown message"))
