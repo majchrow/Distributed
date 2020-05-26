@@ -38,7 +38,6 @@ public class FirstApp {
             }
             client.tell(line, null);     // send message to actor
         }
-        system.eventStream().setLogLevel(Logging.WarningLevel());
 
         system.terminate();
     }
