@@ -7,7 +7,7 @@ import akka.event.LoggingAdapter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static second.App.statement;
+import static second.SecondApp.statement;
 
 public class DatabaseWorker extends AbstractActor {
 

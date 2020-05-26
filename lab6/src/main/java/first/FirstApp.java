@@ -14,12 +14,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class App {
+public class FirstApp {
 
 
     public static void main(String[] args) throws IOException {
 
-        File configFile = new File("app.conf");
+        File configFile = new File("first.conf");
         Config config = ConfigFactory.parseFile(configFile);
         final ActorSystem system = ActorSystem.create("local_system", config);
         ActorRef client = system.actorOf(Props.create(ClientActor.class), "client");

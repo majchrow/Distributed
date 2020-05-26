@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 
-public class App {
+public class SecondApp {
 
 
     public static Connection connection = null;
@@ -41,7 +41,7 @@ public class App {
 
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
-        File configFile = new File("app.conf");
+        File configFile = new File("second.conf");
         Config config = ConfigFactory.parseFile(configFile);
         final ActorSystem system = ActorSystem.create("local_system", config);
         ActorRef client = system.actorOf(Props.create(ClientActor.class), "client");
