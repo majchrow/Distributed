@@ -1,4 +1,4 @@
-package first.client;
+package second.client;
 
 import akka.actor.AbstractActor;
 import akka.event.Logging;
