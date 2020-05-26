@@ -93,13 +93,6 @@ public class ThirdApp extends AllDirectives {
             client.tell(line, null);     // send message to actor
         }
 
-
-//        Http.get(system).singleRequest(HttpRequest.create(
-//                String.format("https://www.opineo.pl/?szukaj=%s&s=2", URLEncoder.encode("olimp creatine xplode", "utf-8"))
-//        )).thenCompose(response ->
-//                response.entity().toStrict(5000, materializer)).thenApply(entity ->
-//                entity.getData().utf8String()).thenAccept(System.out::println);
-
         system.terminate();
     }
 
